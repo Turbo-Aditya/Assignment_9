@@ -3,13 +3,21 @@ import '../app.css'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom'
 
+import { useEffect } from "react";
 
 
-function Login() {
+
+function Login({onLogin}) {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [pass, setPass] = useState('');
     const [msg, setMsg] = useState('');
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/home');
+        }
+    }, [navigate]);
 
     const singIn = async (e) => {
         e.preventDefault();
@@ -17,8 +25,12 @@ function Login() {
         try {
             const response = await axios.post(`/user/signin`, 
             {email: email, password:pass} )
+            const { token } = response.data;
+            localStorage.setItem('token', token)
+        
   if(response.data.user) {
     console.log("Logged in", response.data.user);
+    onLogin();
     navigate('/home');
 
   }
