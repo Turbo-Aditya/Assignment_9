@@ -31,30 +31,32 @@ const authController = {
         }
     },
 
-  async singin(req, res,next){
-    try {
-        const {email, password} = req.body
-        const user = await authService.signin(email, password);
-        if(!user) {
-            return res.status(401).json({ error: "User not found or incorrect password." });
+    async singin(req, res,next){
+        try {
+            const {email, password} = req.body
+            const {user, token} = await authService.signin(email, password);
+            if(!user) {
+                return res.status(401).json({ error: "User not found or incorrect password." });
+            }
+            return res.status(200).json({
+                message: "Logged in",
+                user,
+                token
+                
+    
+            })
+    
+        } catch(err) {
+            return res.status(400).json({
+                message: "Validation error",
+                error: err.message
+                
+            })
+          
+    
+    
         }
-        return res.status(200).json({
-            message: "Logged in",
-            user
-
-        })
-
-    } catch(err) {
-        return res.status(400).json({
-            message: "Validation error",
-            error: err.message
-            
-        })
-      
-
-
-    }
-  },
+      },
 
 async editUser(req, res, next){
     try{
